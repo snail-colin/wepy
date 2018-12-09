@@ -1,0 +1,352 @@
+<template>
+  <view class="page">
+
+
+    <wux-wing-blank class="page_bd">
+
+      <view class="page_bd_sxlx" bindtap="goDetail(1)">
+        <wux-white-space size="small"/>
+        <wux-wing-blank size="large">
+          <wux-row>
+            <wux-col span="9">
+              <wux-circle percent="{{percentSxlx}}" color="lime" background-color="#eee">{{percentSxlxShow}}
+              </wux-circle>
+            </wux-col>
+            <wux-col span="3" class="iconBox">
+              <wux-white-space size="large"/>
+              <wux-white-space size="large"/>
+              <view>
+                <i class='iconfont icon-lianxi1'></i>
+              </view>
+              <wux-white-space size="small"/>
+              <wux-white-space size="small"/>
+              <view>
+                <text class="ms">顺序练习</text>
+              </view>
+            </wux-col>
+          </wux-row>
+        </wux-wing-blank>
+      </view>
+
+      <wux-white-space size="large"/>
+
+      <view class="page_bd_sxlx page_bd_sjlx" bindtap="goDetail(2)">
+        <wux-white-space size="small"/>
+        <wux-wing-blank size="large">
+          <wux-row>
+            <wux-col span="9">
+              <wux-circle percent="{{percentSjlx}}" color="magenta" background-color="#eee">{{percentSjlxShow}}
+              </wux-circle>
+            </wux-col>
+            <wux-col span="3" class="iconBox">
+              <wux-white-space size="large"/>
+              <wux-white-space size="large"/>
+              <view>
+                <i class='iconfont icon-iconfontsuijibofang0101'></i>
+              </view>
+              <wux-white-space size="small"/>
+              <wux-white-space size="small"/>
+              <view>
+                <text class="ms">随机练习</text>
+              </view>
+            </wux-col>
+          </wux-row>
+        </wux-wing-blank>
+      </view>
+
+      <wux-white-space size="large"/>
+
+      <view class="page_bd_sxlx page_bd_ks" bindtap="goDetail(3)">
+        <wux-white-space size="small"/>
+        <wux-wing-blank size="large">
+          <wux-row>
+            <wux-col span="9">
+              <wux-circle percent="{{percentMnks}}" color="deepskyblue" background-color="#eee">0%</wux-circle>
+            </wux-col>
+            <wux-col span="3" class="iconBox">
+              <wux-white-space size="large"/>
+              <wux-white-space size="small"/>
+              <view>
+                <i class='iconfont icon-monikaoshi'></i>
+              </view>
+              <wux-white-space size="small"/>
+              <wux-white-space size="small"/>
+              <view>
+                <text class="ms">模拟考试</text>
+              </view>
+            </wux-col>
+          </wux-row>
+        </wux-wing-blank>
+      </view>
+
+    </wux-wing-blank>
+    <wux-white-space/>
+
+    <wux-popup closable visible="{{!isAuth&&visible}}" content="申请获取您的授权" bind:close="onClose1">
+      <wux-button class="popup__button" block disabled type="assertive" bindtap="onClose1" open-type="getUserInfo"
+                  bindgetuserinfo="bindGetUserInfo">授权登录
+      </wux-button>
+    </wux-popup>
+
+
+  </view>
+
+
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Home extends wepy.page {
+    config = {
+      'navigationBarTitleText': '考试平台',
+      'usingComponents': {
+        'wux-icon': '../components/wux//icon/index',
+        'wux-button': '../components/wux/button/index',
+        'wux-circle': '../components/wux/circle/index',
+        'wux-row': '../components/wux/row/index',
+        'wux-col': '../components/wux/col/index',
+        'wux-wing-blank': '../components/wux/wing-blank/index',
+        'wux-cell-group': '../components/wux/cell-group/index',
+        'wux-popup': '../components/wux//popup/index',
+        'wux-white-space': '../components/wux/white-space/index'
+      }
+
+    };
+    components = {};
+
+    data = {
+      // percentSxlx: 0,
+      percentSxlxShow: '0%',
+      // percentSjlx: 0,
+      percentSjlxShow: '0%',
+      isAuth: false,
+      visible: false,
+      percentMnks: 0
+      // userData: {}
+    };
+
+    methods = {
+      goDetail(type) {
+        if (!this.isAuth) {
+          console.log('未授权')
+          this.visible = true
+          this.setData({
+            visible: this.visible
+          })
+        } else {
+          console.log(this.data.openid)
+          let openid = this.data.openid
+          if (type === '1') {
+            let recordIndex = this.data.recordIndex0 + 1
+            this.$navigate('./exercise', {openid: openid, recordIndex: recordIndex, ptitle: 'sxlx', ptype: 0})
+          } else if (type === '2') {
+            let recordIndex = this.data.recordIndex1 + 1
+            this.$navigate('./exercise', {openid: openid, recordIndex: recordIndex, ptitle: 'sjlx', ptype: 1})
+          } else {
+            this.$navigate('./exam', {openid: openid})
+          }
+        }
+      },
+      onClose1() {
+        this.visible = false
+        this.setData({
+          visible: this.visible
+        })
+      },
+      bindGetUserInfo(e) {
+        console.log(6)
+        console.log(e.detail.userInfo)
+        if (e.detail.userInfo !== undefined) {
+          this.isAuth = true
+          this.visible = false
+          this.setData({
+            isAuth: this.isAuth,
+            visible: this.visible
+          })
+
+          var that = this
+          wx.login({
+            success(res) {
+              if (res.code) {
+                console.log('登录成功！' + res.code)
+                var code = res.code
+                wx.getUserInfo({
+                  success: res => {
+                    // console.log(res.encryptedData)
+                    wx.request({
+                      // url: 'https://colin.snailc.club/dcwj/login.htm',
+                      url: 'https://jzh.hzshoping.com/dcwj/login.htm',
+                      data: {
+                        code: code,
+                        encryptedData: res.encryptedData,
+                        iv: res.iv
+                      },
+                      method: 'POST',
+                      header: {
+                        'content-type': 'application/json'
+                      },
+                      success(res) {
+                        console.log(res.data)
+                        // 顺序
+                        let recordCount0 = res.data.answerSchedule.recordCount0
+                        let total0 = res.data.answerSchedule.total0
+                        let recordCount1 = res.data.answerSchedule.recordCount1
+                        let total1 = res.data.answerSchedule.total1
+                        var percentSxlx = (recordCount0 / total0 * 100)
+                        var percentSjlx = (recordCount1 / total1 * 100)
+                        var percentSxlxShow = (recordCount0 / total0 * 100)
+                        var percentSjlxShow = (recordCount1 / total1 * 100)
+                        var openid = res.data.openId
+                        that.data.percentSxlx = percentSxlx.toFixed(0)
+                        that.data.percentSxlxShow = percentSxlxShow.toFixed(0) + '%'
+                        that.data.percentSjlx = percentSjlx.toFixed(0)
+                        that.data.percentSjlxShow = percentSjlxShow.toFixed(0) + '%'
+                        that.data.openid = openid
+                        that.data.recordIndex0 = recordCount0
+                        that.data.recordIndex1 = recordCount1
+                        that.data.isAuth = true
+                        that.setData({
+                          percentSxlx: that.data.percentSxlx,
+                          percentSxlxShow: that.data.percentSxlxShow,
+                          percentSjlx: that.data.percentSjlx,
+                          percentSjlxShow: that.data.percentSjlxShow,
+                          openid: that.data.openid,
+                          recordIndex0: that.data.recordIndex0,
+                          recordIndex1: that.data.recordIndex1,
+                          isAuth: that.data.isAuth
+                        })
+                        console.log(that.data)
+                      }
+                    })
+                  },
+                  fail: res => {
+                    console.log(5)
+                  }
+                })
+              } else {
+                console.log('登录失败！' + res.errMsg)
+              }
+            }
+          })
+        }
+        console.log(this.data)
+      }
+    };
+
+    onLoad() {
+      var that = this
+      wx.login({
+        success(res) {
+          if (res.code) {
+            console.log('登录成功！' + res.code)
+            var code = res.code
+            wx.getSetting({
+              success(res) {
+                if (res.authSetting['scope.userInfo'] === true) { // 成功授权
+                  // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
+                  wx.getUserInfo({
+                    success: res => {
+                      // console.log(res.encryptedData)
+                      wx.request({
+                        // url: 'https://colin.snailc.club/dcwj/login.htm',
+                        url: 'https://jzh.hzshoping.com/dcwj/login.htm',
+                        data: {
+                          code: code,
+                          encryptedData: res.encryptedData,
+                          iv: res.iv
+                        },
+                        method: 'POST',
+                        header: {
+                          'content-type': 'application/json'
+                        },
+                        success(res) {
+                          console.log(res.data)
+                          // 顺序
+                          let recordCount0 = res.data.answerSchedule.recordCount0
+                          let total0 = res.data.answerSchedule.total0
+                          let recordCount1 = res.data.answerSchedule.recordCount1
+                          let total1 = res.data.answerSchedule.total1
+                          var percentSxlx = (recordCount0 / total0 * 100)
+                          var percentSjlx = (recordCount1 / total1 * 100)
+                          var percentSxlxShow = (recordCount0 / total0 * 100)
+                          var percentSjlxShow = (recordCount1 / total1 * 100)
+                          var openid = res.data.openId
+                          that.data.percentSxlx = percentSxlx.toFixed(0)
+                          that.data.percentSxlxShow = percentSxlxShow.toFixed(0) + '%'
+                          that.data.percentSjlx = percentSjlx.toFixed(0)
+                          that.data.percentSjlxShow = percentSjlxShow.toFixed(0) + '%'
+                          that.data.openid = openid
+                          that.data.recordIndex0 = recordCount0
+                          that.data.recordIndex1 = recordCount1
+                          that.data.isAuth = true
+                          that.setData({
+                            percentSxlx: that.data.percentSxlx,
+                            percentSxlxShow: that.data.percentSxlxShow,
+                            percentSjlx: that.data.percentSjlx,
+                            percentSjlxShow: that.data.percentSjlxShow,
+                            openid: that.data.openid,
+                            recordIndex0: that.data.recordIndex0,
+                            recordIndex1: that.data.recordIndex1,
+                            isAuth: that.data.isAuth
+                          })
+                          console.log(that.data)
+                        }
+                      })
+                    },
+                    fail: res => {
+                      console.log(5)
+                    }
+                  })
+                } else {
+                  console.log(1)
+                  console.log(that.data)
+                }
+              },
+              fail(res) {
+                console.log(2)
+              }
+            })
+          } else {
+            console.log('登录失败！' + res.errMsg)
+          }
+        }
+      })
+    };
+  }
+</script>
+
+<style lang='less' scoped>
+  .page {
+    height: 100%;
+
+    .page_bd_sxlx {
+      color: #fff;
+      border-radius: 8px;
+      background-color: deepskyblue;
+    }
+
+    .page_bd_sjlx {
+      background-color: lime !important;
+    }
+
+    .page_bd_ks {
+      background-color: magenta !important;
+
+      .iconfont {
+        font-size: 34px !important;
+      }
+    }
+
+    .iconBox {
+      text-align: center;
+      margin: auto;
+      .iconfont {
+        font-size: 30px;
+      }
+      .ms {
+        font-size: 16px;
+      }
+    }
+  }
+</style>

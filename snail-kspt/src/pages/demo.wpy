@@ -1,0 +1,36 @@
+<template>
+  <view class="container">
+      <view >demo</view>
+    <van-button type="primary">按钮</van-button>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Demo extends wepy.page {
+    config = {
+      'navigationBarTitleText': 'test'
+    };
+    components = {
+
+    };
+
+    data = {
+
+    };
+    methods = {
+
+    };
+    onLoad() {
+
+    };
+  }
+</script>
+
+<style lang='less' scoped>
+  .page {
+    height: 100%;
+  }
+</style>

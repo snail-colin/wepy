@@ -1,0 +1,36 @@
+<template>
+  <web-view src="{{url}}"></web-view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Exam extends wepy.page {
+    config = {
+      'navigationBarTitleText': '模拟考试'
+    };
+    components = {
+
+    };
+
+    data = {
+      url: ''
+    };
+    methods = {
+
+    };
+    onLoad(options) {
+      console.log(options)
+      // let url = 'https://colin.snailc.club/dcwj/#/exam-ba-home?openid=' + options.openid
+      let url = 'https://jzh.hzshoping.com/dcwj/#/exam-ba-home?openid=' + options.openid
+      this.setData({
+        url: url
+      })
+      console.log(this.data.url)
+    };
+  }
+</script>
+
+<style scoped>
+
+</style>

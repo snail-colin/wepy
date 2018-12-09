@@ -1,0 +1,37 @@
+<template>
+  <web-view src="{{url}}"></web-view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Exercise extends wepy.page {
+    config = {
+      'navigationBarTitleText': '练习'
+    };
+    components = {};
+
+    data = {
+      url: ''
+    };
+    methods = {
+
+    };
+
+    onLoad(options) {
+      // var url = 'https://colin.snailc.club/dcwj/#/sxlx?recordIndex=' + options.recordIndex + '&ptitle=' + options.ptitle + '&ptype=' + options.ptype + '&openid=' + options.openid + '&v=1.0'
+      var url = 'https://jzh.hzshoping.com/dcwj/#/sxlx?recordIndex=' + options.recordIndex + '&ptitle=' + options.ptitle + '&ptype=' + options.ptype + '&openid=' + options.openid + '&v=1.0'
+      console.log(url)
+      this.data.url = url
+      this.setData({
+        url: this.data.url
+      })
+    };
+  }
+</script>
+
+<style lang='less' scoped>
+  .page {
+    height: 100%;
+  }
+</style>
